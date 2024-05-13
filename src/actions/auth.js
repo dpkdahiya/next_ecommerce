@@ -1,7 +1,7 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
-import { genSalt, hash, compare } from "bcryptjs";
+import { genSalt, hash, compare } from "bcrypt";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 const prisma = new PrismaClient();
@@ -24,14 +24,15 @@ export async function create_user(formdata) {
 
 export async function verify_user(formdata) {
   const email = formdata.get("email");
-  const password = hash(formdata.get("password"));
+  const password = formdata.get("password");
   const user = await prisma.user.findFirst({
     where: {
       email: email,
     },
   });
   if (user) {
-    if (await compare(password, user.password)) {
+    const passwordMatch = await compare(password, user.password);
+    if (passwordMatch) {
       cookies().set("user", user.name);
       redirect("/");
     } else {
@@ -40,4 +41,8 @@ export async function verify_user(formdata) {
   } else {
     throw Error("User not found");
   }
+}
+
+export async function getName() {
+  return cookies().get("user");
 }
