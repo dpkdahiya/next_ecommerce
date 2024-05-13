@@ -37,3 +37,8 @@ next-env.d.ts
 
 # vscode configuration
 .vscode/
+
+# database
+*.db
+*.sqlite
+.env
