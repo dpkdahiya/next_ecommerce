@@ -1,9 +1,9 @@
-import { cookies } from "next/headers";
 import React from "react";
+import { auth } from "@/auth";
 
-function Hello() {
-  const name = cookies().get("user").value;
-  return <h1>hello {name}</h1>;
+async function Hello() {
+  const data = await auth();
+  return <h1>hello {data?.user?.name}</h1>;
 }
 
 export default Hello;
